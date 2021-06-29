@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 
 namespace GroupSpaceWeb.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PostsController : ControllerBase
@@ -40,10 +39,10 @@ namespace GroupSpaceWeb.Controllers
 
         // POST api/<PostsController>
         [HttpPost]
-        public IActionResult Post([FromBody] PostInsertDto post)
+        public IActionResult Post([FromForm] PostInsertDto post)
         {
             post.Date = DateTime.Now;
-            var response = postService.Add(post);
+            var response = postService.Add(post).Result;
             if (response.OpertaionState)
             {
                 return Created("group", new { Message = "Post is Published Succesfully" });
@@ -80,13 +79,6 @@ namespace GroupSpaceWeb.Controllers
                 return StatusCode(500, response.Message);
             }
         }
-        //Group Services related to this Post
-        [Route("~/api/groups/{Id}/posts")]
-        [HttpGet]
-        public IActionResult GeGroupPosts(int Id)
-        {
-            var data = postService.GeGroupPosts(Id);
-            return Ok(new { data });
-        }
+       
     }
 }

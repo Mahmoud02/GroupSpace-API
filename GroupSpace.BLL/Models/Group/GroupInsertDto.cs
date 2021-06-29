@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -20,6 +21,6 @@ namespace GroupSpace.BLL.Models
         public bool Private { get; set; }
         [Required]
         public string Description { get; set; }
-        public string CoverPhotoUrl { get; set; }
+        public IFormFile CoverPhoto { get; set; }
     }
 }

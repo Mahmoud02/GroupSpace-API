@@ -3,14 +3,16 @@ using System;
 using GroupSpace.DAL.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GroupSpace.DAL.Migrations
 {
     [DbContext(typeof(AppDataContext))]
-    partial class AppDataContextModelSnapshot : ModelSnapshot
+    [Migration("20210629194703_GroupMember")]
+    partial class GroupMember
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -227,9 +229,6 @@ namespace GroupSpace.DAL.Migrations
                     b.Property<int>("GroupId")
                         .HasColumnType("int");
 
-                    b.Property<int>("NumOfTimes")
-                        .HasColumnType("int");
-
                     b.Property<int>("PostId")
                         .HasColumnType("int");
 
@@ -244,7 +243,7 @@ namespace GroupSpace.DAL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ReportPosts");
+                    b.ToTable("ReportPost");
                 });
 
             modelBuilder.Entity("GroupSpace.DAL.Entities.RoleTypeGroup", b =>

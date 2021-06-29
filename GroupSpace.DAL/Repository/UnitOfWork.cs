@@ -15,6 +15,11 @@ namespace GroupSpace.DAL.Repository
         IRepository<User>UserRepository { get; }
         IRepository<Group>GroupRepository { get; }
         IRepository<Post> PostRepository { get; }
+        IRepository<JoinRequest> JoinRequestRepository { get; }
+        IRepository<GroupMember> GroupMemberRepository { get; }
+        IRepository<ReportPost> ReportPostRepository { get; }
+
+
 
         CommonResult SaveChanges();
     }
@@ -26,6 +31,7 @@ namespace GroupSpace.DAL.Repository
         {
             this.context = context;
         }
+        
         private IRepository<User> userRepository;
         public IRepository<User> UserRepository
         {
@@ -39,6 +45,7 @@ namespace GroupSpace.DAL.Repository
                 return userRepository;
             }
         }
+        
         private IRepository<Group> groupRepository;
         public IRepository<Group> GroupRepository
         {
@@ -52,6 +59,7 @@ namespace GroupSpace.DAL.Repository
                 return groupRepository;
             }
         }
+        
         private IRepository<Post> postRepository;
         public IRepository<Post> PostRepository
         {
@@ -65,7 +73,47 @@ namespace GroupSpace.DAL.Repository
                 return postRepository;
             }
         }
+        
+        private IRepository<JoinRequest> joinRequestRepository;
+        public IRepository<JoinRequest> JoinRequestRepository
+        {
+            get
+            {
+                if (joinRequestRepository == null)
+                {
+                    joinRequestRepository = new JoinRequestRepository(context);
+                }
 
+                return joinRequestRepository;
+            }
+        }
+        
+        private IRepository<GroupMember> groupMemberRepository;
+        public IRepository<GroupMember> GroupMemberRepository
+        {
+            get
+            {
+                if (groupMemberRepository == null)
+                {
+                    groupMemberRepository = new GroupMemberRepository(context);
+                }
+
+                return groupMemberRepository;
+            }
+        }
+        
+        private IRepository<ReportPost> reportPostRepository;
+        public IRepository<ReportPost> ReportPostRepository {
+            get
+            {
+                if (reportPostRepository == null)
+                {
+                    reportPostRepository = new ReportPostRepository(context);
+                }
+
+                return reportPostRepository;
+            }
+        }
 
         public CommonResult SaveChanges()
         {

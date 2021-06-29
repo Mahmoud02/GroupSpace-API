@@ -24,9 +24,16 @@ namespace GroupSpace.DAL.Entities
         public string Description { get; set; }
         [Column(TypeName = "text")]
         public string CoverPhotoUrl { get; set; }
+        
         //Navigation
         public List<Post> Posts { get; set; }
+        public List<JoinRequest> JoinRequests { get; set; }
+        public List<ReportPost> ReportPosts { get; set; }
+        public List<GroupMember> GroupMembers { get; set; }
+
+        public GroupType GroupType { get; set; }
 
 
+        
     }
 }

@@ -11,15 +11,17 @@ using System.Threading.Tasks;
 
 namespace GroupSpaceWeb.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class GroupsController : ControllerBase
     {
         private readonly IGroupService groupService;
-        public GroupsController(IGroupService groupService)
+        private readonly IPostService postService;
+
+        public GroupsController(IGroupService groupService,IPostService postService)
         {
             this.groupService = groupService;
+            this.postService = postService;
         }
         // GET: api/<GroupController>
         [HttpGet]
@@ -36,18 +38,13 @@ namespace GroupSpaceWeb.Controllers
 
             return Ok(groupService.Get(id));
         }
-        [Route("api/users/{Id}/groups")]
-        [HttpGet]
-        public IActionResult GetUserGroups(int Id)
-        {
-            return Ok(groupService.GetUserGroups(Id));
-        }
+       
 
         // POST api/<GroupController>
         [HttpPost]
-        public IActionResult Post([FromBody] GroupInsertDto group)
+        public IActionResult Post([FromForm] GroupInsertDto group)
         {
-            var response = groupService.Add(group);
+            var response = groupService.Add(group).Result;
             if (response.OpertaionState) {
                 return Created("group", new { Message ="Group is Added Succesfully" });
             } 
@@ -83,5 +80,39 @@ namespace GroupSpaceWeb.Controllers
                 return StatusCode(500, response.Message);
             }
         }
+
+        #region Get group realted resource
+       
+        [HttpGet("{Id}/posts")]
+        public IActionResult GroupPosts(int Id)
+        {
+            var data = postService.GroupPosts(Id);
+            return Ok(new { data });
+        }
+        [HttpGet("{Id}/meta")]
+        public IActionResult GroupMetaData(int Id)
+        {
+            var data = groupService.GetGroupMetaData(Id);
+            return Ok(new { data });
+        }
+        [HttpGet("{Id}/members")]
+        public IActionResult Members(int Id)
+        {
+            var data = groupService.GetGroupUsers(Id);
+            return Ok(new { data });
+        }
+        [HttpGet("{Id}/requests")]
+        public IActionResult Requests(int Id)
+        {
+            var data = groupService.GetJoinRequests(Id);
+            return Ok(new { data });
+        }
+        [HttpGet("{Id}/reports")]
+        public IActionResult Reports(int Id)
+        {
+            var data = groupService.GetReportedPosts(Id);
+            return Ok(new { data });
+        }
+        #endregion
     }
 }

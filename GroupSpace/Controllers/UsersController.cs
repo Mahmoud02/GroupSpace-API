@@ -21,20 +21,20 @@ using System.Threading.Tasks;
 
 namespace GroupSpaceWeb.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
         private readonly IUserService userService;
         private readonly JwtSettings jwtSettings;
+        private readonly IGroupService groupService;
 
 
-        public UsersController(IUserService userService, IOptions<JwtSettings> jwtSettings)
+        public UsersController(IUserService userService, IOptions<JwtSettings> jwtSettings , IGroupService groupService)
         {
             this.userService = userService;
             this.jwtSettings = jwtSettings.Value;
-
+            this.groupService = groupService;
         }
 
         // GET: api/<UserController>
@@ -137,5 +137,15 @@ namespace GroupSpaceWeb.Controllers
                 Token = token
             });
         }
+
+        #region Get user realted resource
+        
+        [HttpGet("{Id}/groups")]
+        public IActionResult GetUserGroups(int Id)
+        {
+            var data = groupService.GetUserGroups(Id);
+            return Ok(new { data });
+        }
+        #endregion
     }
 }

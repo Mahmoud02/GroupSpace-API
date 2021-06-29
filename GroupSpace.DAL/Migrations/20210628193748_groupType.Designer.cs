@@ -3,14 +3,16 @@ using System;
 using GroupSpace.DAL.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GroupSpace.DAL.Migrations
 {
     [DbContext(typeof(AppDataContext))]
-    partial class AppDataContextModelSnapshot : ModelSnapshot
+    [Migration("20210628193748_groupType")]
+    partial class groupType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,35 +51,6 @@ namespace GroupSpace.DAL.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Groups");
-                });
-
-            modelBuilder.Entity("GroupSpace.DAL.Entities.GroupMember", b =>
-                {
-                    b.Property<int>("GroupMemberId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("GroupId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("JoinDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("RoleTypeGroupId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("GroupMemberId");
-
-                    b.HasIndex("GroupId");
-
-                    b.HasIndex("RoleTypeGroupId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("GroupMembers");
                 });
 
             modelBuilder.Entity("GroupSpace.DAL.Entities.GroupType", b =>
@@ -161,30 +134,6 @@ namespace GroupSpace.DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("GroupSpace.DAL.Entities.JoinRequest", b =>
-                {
-                    b.Property<int>("JoinRequestId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("GroupId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("JoinRequestId");
-
-                    b.HasIndex("GroupId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("JoinRequests");
-                });
-
             modelBuilder.Entity("GroupSpace.DAL.Entities.Post", b =>
                 {
                     b.Property<int>("PostId")
@@ -216,62 +165,6 @@ namespace GroupSpace.DAL.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Posts");
-                });
-
-            modelBuilder.Entity("GroupSpace.DAL.Entities.ReportPost", b =>
-                {
-                    b.Property<int>("ReportPostId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("GroupId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumOfTimes")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PostId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ReportPostId");
-
-                    b.HasIndex("GroupId");
-
-                    b.HasIndex("PostId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ReportPosts");
-                });
-
-            modelBuilder.Entity("GroupSpace.DAL.Entities.RoleTypeGroup", b =>
-                {
-                    b.Property<int>("RoleTypeGroupId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("RoleTypeGroupId");
-
-                    b.ToTable("RoleTypesGroup");
-
-                    b.HasData(
-                        new
-                        {
-                            RoleTypeGroupId = 1,
-                            Text = "User"
-                        },
-                        new
-                        {
-                            RoleTypeGroupId = 2,
-                            Text = "Moderator"
-                        });
                 });
 
             modelBuilder.Entity("GroupSpace.DAL.Entities.User", b =>
@@ -333,48 +226,6 @@ namespace GroupSpace.DAL.Migrations
                     b.Navigation("GroupType");
                 });
 
-            modelBuilder.Entity("GroupSpace.DAL.Entities.GroupMember", b =>
-                {
-                    b.HasOne("GroupSpace.DAL.Entities.Group", null)
-                        .WithMany("GroupMembers")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GroupSpace.DAL.Entities.RoleTypeGroup", "RoleType")
-                        .WithMany()
-                        .HasForeignKey("RoleTypeGroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GroupSpace.DAL.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("RoleType");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("GroupSpace.DAL.Entities.JoinRequest", b =>
-                {
-                    b.HasOne("GroupSpace.DAL.Entities.Group", null)
-                        .WithMany("JoinRequests")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GroupSpace.DAL.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("GroupSpace.DAL.Entities.Post", b =>
                 {
                     b.HasOne("GroupSpace.DAL.Entities.Group", null)
@@ -392,40 +243,9 @@ namespace GroupSpace.DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("GroupSpace.DAL.Entities.ReportPost", b =>
-                {
-                    b.HasOne("GroupSpace.DAL.Entities.Group", null)
-                        .WithMany("ReportPosts")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GroupSpace.DAL.Entities.Post", "Post")
-                        .WithMany()
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GroupSpace.DAL.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Post");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("GroupSpace.DAL.Entities.Group", b =>
                 {
-                    b.Navigation("GroupMembers");
-
-                    b.Navigation("JoinRequests");
-
                     b.Navigation("Posts");
-
-                    b.Navigation("ReportPosts");
                 });
 
             modelBuilder.Entity("GroupSpace.DAL.Entities.GroupType", b =>
