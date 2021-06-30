@@ -93,7 +93,7 @@ namespace GroupSpaceWeb.Controllers
         public IActionResult GroupMetaData(int Id)
         {
             var data = groupService.GetGroupMetaData(Id);
-            return Ok(new { data });
+            return Ok(data);
         }
         [HttpGet("{Id}/members")]
         public IActionResult Members(int Id)
