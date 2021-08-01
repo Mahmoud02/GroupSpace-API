@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GroupSpace.BLL.Models.Group;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,5 +16,6 @@ namespace GroupSpace.BLL.Models
         public bool Private { get; set; }
         public string Description { get; set; }
         public string CoverPhotoUrl { get; set; }
-    }
+        public GroupTypeDto GroupType { get; set; }
+}
 }

@@ -22,6 +22,7 @@ namespace GroupSpace.DAL.Entities
 
         //Navigation
         public User User { get; set; }
+        public Group Group { get; set; }
         public RoleTypeGroup RoleType { get; set; }
     }
 }

@@ -20,9 +20,11 @@ namespace GroupSpace.DAL.Repository
         public override IEnumerable<GroupMember> Find(Expression<Func<GroupMember, bool>> predicate)
         {
             return context.GroupMembers
-                .Include(p => p.User)             
+                .Include(p => p.User)
+                .Include(p => p.Group)
                 .AsQueryable()
                 .Where(predicate).ToList();
         }
+        
     }
 }

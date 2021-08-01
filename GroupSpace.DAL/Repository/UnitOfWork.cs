@@ -18,6 +18,7 @@ namespace GroupSpace.DAL.Repository
         IRepository<JoinRequest> JoinRequestRepository { get; }
         IRepository<GroupMember> GroupMemberRepository { get; }
         IRepository<ReportPost> ReportPostRepository { get; }
+        IRepository<GroupType> GroupTypeRepository { get; }
 
 
 
@@ -112,6 +113,19 @@ namespace GroupSpace.DAL.Repository
                 }
 
                 return reportPostRepository;
+            }
+        }
+        private IRepository<GroupType> groupTypeRepository;
+        public IRepository<GroupType> GroupTypeRepository
+        {
+            get
+            {
+                if (groupTypeRepository == null)
+                {
+                    groupTypeRepository = new GroupTypeRepository(context);
+                }
+
+                return groupTypeRepository;
             }
         }
 

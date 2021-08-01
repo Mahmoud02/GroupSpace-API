@@ -1,5 +1,6 @@
 ﻿using GroupSpace.BLL;
 using GroupSpace.BLL.Models;
+using GroupSpaceWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -17,11 +18,14 @@ namespace GroupSpaceWeb.Controllers
     {
         private readonly IGroupService groupService;
         private readonly IPostService postService;
+        private readonly IGroupMemberService groupMemberService;
 
-        public GroupsController(IGroupService groupService,IPostService postService)
+
+        public GroupsController(IGroupService groupService,IPostService postService, IGroupMemberService groupMemberService)
         {
             this.groupService = groupService;
             this.postService = postService;
+            this.groupMemberService = groupMemberService;
         }
         // GET: api/<GroupController>
         [HttpGet]
@@ -30,7 +34,6 @@ namespace GroupSpaceWeb.Controllers
             return groupService.All();
         }
 
-        // GET api/<GroupController>/5
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
@@ -40,7 +43,6 @@ namespace GroupSpaceWeb.Controllers
         }
        
 
-        // POST api/<GroupController>
         [HttpPost]
         public IActionResult Post([FromForm] GroupInsertDto group)
         {
@@ -54,7 +56,6 @@ namespace GroupSpaceWeb.Controllers
             }
         }
 
-        // PUT api/<GroupController>/5
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody] GroupInsertDto group)
         {
@@ -68,7 +69,6 @@ namespace GroupSpaceWeb.Controllers
 
         }
 
-        // DELETE api/<GroupController>/5
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
@@ -111,6 +111,15 @@ namespace GroupSpaceWeb.Controllers
         public IActionResult Reports(int Id)
         {
             var data = groupService.GetReportedPosts(Id);
+            return Ok(new { data });
+        }
+        #endregion
+
+        #region Find Groups For The User
+        [HttpGet("Find")]
+        public IActionResult Find([FromQuery] int userId)
+        {
+            var data = groupService.FindGroups(userId);
             return Ok(new { data });
         }
         #endregion

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using GroupSpace.BLL.Models;
+using GroupSpace.BLL.Models.Group;
 using GroupSpace.BLL.Shared;
 using GroupSpace.DAL.Entities;
 using GroupSpace.DAL.Shared;
@@ -25,6 +26,17 @@ namespace GroupSpace.BLL.Profiles
             //Post
             CreateMap<Post, PostDto>().ReverseMap();
             CreateMap<Post, PostInsertDto>().ReverseMap();
+            
+            //GroupType
+            CreateMap<GroupType, GroupTypeDto>().ReverseMap();
+
+            //JoinRequest
+            CreateMap<JoinRequest, JoinRequestDto>().ReverseMap();
+            CreateMap<JoinRequest, JoinRequestInsertDto>().ReverseMap();
+
+            //GroupMember
+            CreateMap<GroupMember, GroupMemberDto>().ReverseMap();
+            CreateMap<GroupMember, GroupMemberInsertDto>().ReverseMap();
 
         }
     }

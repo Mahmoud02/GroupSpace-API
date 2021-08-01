@@ -23,6 +23,9 @@ namespace GroupSpace.BLL
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddTransient<IGroupService, GroupService>();
             services.AddTransient<IPostService, PostService>();
+            services.AddTransient<IGroupTypeService, GroupTypeService>();
+            services.AddTransient<IJoinRequestService, JoinRequestService>();
+            services.AddTransient<IGroupMemberService, GroupMemberService>();
             return services.AddTransient<IUserService, UserService>();
 
 

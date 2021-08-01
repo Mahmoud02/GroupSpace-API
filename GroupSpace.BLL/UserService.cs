@@ -90,7 +90,7 @@ namespace GroupSpace.BLL
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
                 return null;
 
-            var user = unitOfWork.UserRepository.Find(x => x.Email == email).First();
+            var user = unitOfWork.UserRepository.Find(x => x.Email == email).FirstOrDefault();
 
             // check if username exists
             if (user == null)

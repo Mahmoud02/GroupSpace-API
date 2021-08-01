@@ -13,4 +13,8 @@
     <ProjectReference Include="..\GroupSpace.BLL\GroupSpace.BLL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>

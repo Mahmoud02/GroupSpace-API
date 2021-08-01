@@ -28,13 +28,26 @@ namespace GroupSpaceWeb.Controllers
         private readonly IUserService userService;
         private readonly JwtSettings jwtSettings;
         private readonly IGroupService groupService;
+        private readonly IJoinRequestService joinRequestService;
+        private readonly IGroupMemberService groupMemberService;
 
 
-        public UsersController(IUserService userService, IOptions<JwtSettings> jwtSettings , IGroupService groupService)
+
+
+        public UsersController(
+            IUserService userService, 
+            IOptions<JwtSettings> jwtSettings ,
+            IGroupService groupService,
+            IJoinRequestService joinRequestService,
+            IGroupMemberService groupMemberService
+            )
         {
             this.userService = userService;
             this.jwtSettings = jwtSettings.Value;
             this.groupService = groupService;
+            this.joinRequestService = joinRequestService;
+            this.groupMemberService = groupMemberService;
+
         }
 
         // GET: api/<UserController>
@@ -144,6 +157,18 @@ namespace GroupSpaceWeb.Controllers
         public IActionResult GetUserGroups(int Id)
         {
             var data = groupService.GetUserGroups(Id);
+            return Ok(new { data });
+        }
+        [HttpGet("{Id}/joined")]
+        public IActionResult GetUserJoinedGroups(int Id)
+        {
+            var data = groupMemberService.GetUserJoinedGroups(Id);
+            return Ok(new { data });
+        }
+        [HttpGet("{Id}/requests")]
+        public IActionResult GetGroupsIdOfJoinRequestByUserId(int Id)
+        {
+            var data = joinRequestService.getGroupsIdOfJoinRequestByUserId(Id);
             return Ok(new { data });
         }
         #endregion

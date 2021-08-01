@@ -22,14 +22,15 @@ namespace GroupSpace.BLL
         Response Update(GroupInsertDto entity);
         bool CheckIfGroupExist(int id);
         Response Delete(int userId);
+        //Related Data
+        GroupMetaData GetGroupMetaData(int groupId);
         IEnumerable<GroupDto> GetUserGroups(int userId);
         IEnumerable<GroupMemberDto> GetGroupUsers(int groupId);
         IEnumerable<JoinRequestDto> GetJoinRequests(int groupId);
         IEnumerable<ReportPostDto> GetReportedPosts(int groupId);
 
-
-        GroupMetaData GetGroupMetaData(int groupId);
-
+        //Find Groups For The User
+        IEnumerable<GroupDto> FindGroups(int userId);
 
     }
     public class GroupService : IGroupService
@@ -43,7 +44,6 @@ namespace GroupSpace.BLL
             this.unitOfWork = unitOfWork;
             this._mapper = mapper;
             _config = config;
-
         }
 
         public async Task<Response> Add(GroupInsertDto entity)
@@ -144,7 +144,8 @@ namespace GroupSpace.BLL
         {
             var joinRequests = unitOfWork.JoinRequestRepository.Find(g => g.GroupId == groupId);
 
-            return _mapper.Map<List<JoinRequestDto>>(joinRequests);
+            var entites = _mapper.Map<List<JoinRequestDto>>(joinRequests);
+            return entites;
         }
 
         public IEnumerable<ReportPostDto> GetReportedPosts(int groupId)
@@ -152,6 +153,12 @@ namespace GroupSpace.BLL
             var reportedPosts = unitOfWork.ReportPostRepository.Find(g => g.GroupId == groupId);
 
             return _mapper.Map<List<ReportPostDto>>(reportedPosts);
+        }
+
+        public IEnumerable<GroupDto> FindGroups(int userId)
+        {
+            var groups = unitOfWork.GroupRepository.Find(g => g.UserId != userId);
+            return _mapper.Map<List<GroupDto>>(groups);
         }
     }
 }

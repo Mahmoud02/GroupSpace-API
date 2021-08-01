@@ -30,10 +30,17 @@ namespace GroupSpace.DAL.Repository
                 .AsQueryable()
                 .Where(predicate).ToList();
         }
+        
 
         public virtual T Get(int id)
         {
             return context.Find<T>(id);
+        }
+        public virtual T Get(Expression<Func<T, bool>> predicate)
+        {
+            return context.Set<T>()
+                .AsQueryable()
+                .Where(predicate).FirstOrDefault();
         }
 
         public virtual IEnumerable<T> All()

@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace GroupSpace.BLL.Models.Group
 {
-    public class JoinRequestDto
+    public class JoinRequestInsertDto
     {
-        public int JoinRequestId { get; set; }
+        [Required]
         public int UserId { get; set; }
+        [Required]
         public int GroupId { get; set; }
+        [Required]
         public DateTime Date { get; set; }
-        public UserDto User { get; set; }
-
-
     }
 }
