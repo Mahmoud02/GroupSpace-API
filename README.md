@@ -4,7 +4,7 @@
  2. API 
  3. Front End Demo - Using Angular
 
-## First, let's see Accounts.groups Module.
+## First,Accounts.groups Module.
 In this part, we want to provide the user with some features such as logging in and out, creating a new account, confirming their account, and some other things.
 Also, this part helps different applications to obtain the necessary permissions to communicate with the API.
 
@@ -28,7 +28,7 @@ and API access control in your applications.
 IdentityServer4 is officially certified by the OpenID Foundation and thus spec-compliant and interoperable. 
 It is part of the .NET Foundation, and operates under their code of conduct. It is licensed under Apache 2 (an OSI approved license).
 
-## Api, let's see Api  Module.
+## Api.
 Various applications, whether they  SPA or mobile apps, communicate with the API to modify, create or delete the Resources.
 The API checks the token on each request to ensure that the application communicating with it has the necessary permissions.
 ### Core  things used to create they API
