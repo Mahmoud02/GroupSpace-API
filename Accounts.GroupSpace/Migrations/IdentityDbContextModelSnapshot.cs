@@ -70,9 +70,9 @@ namespace Accounts.GroupSpace.Migrations
                         {
                             Id = new Guid("13229d33-99e0-41b3-b18d-4f72127e3971"),
                             Active = "1",
-                            ConcurrencyStamp = "ee498192-2896-4d45-b301-8e9a22c48cbe",
+                            ConcurrencyStamp = "7535dd74-0200-4f88-80fa-7f267f0525c4",
                             Email = "test@yahoo.com",
-                            Password = "AQAAAAEAACcQAAAAECcmP7yvBHSz3ICdhLlTLGW7NBU7n01KM2mcyapE7URU/4gMLGd6nNt5nH5HVuw21g==",
+                            Password = "AQAAAAEAACcQAAAAEMLD4V/YzeYdz2zwPWcnC9fByQYR+TArwGQRkkBy43Dk1FAxXrelTJOzpkFYSj6d7Q==",
                             SecurityCodeExpirationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Subject = "d860efca-22d9-47fd-8249-791ba61b07c7",
                             Username = "Mahmoud"
@@ -111,8 +111,8 @@ namespace Accounts.GroupSpace.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("62bf719b-7372-4180-aaf5-8a9d383e01c0"),
-                            ConcurrencyStamp = "0fc10e77-aa70-4fd3-b1d6-c3d4d8cabf63",
+                            Id = new Guid("a4ffed4d-4d03-4e6b-b76c-54266ff5f6a8"),
+                            ConcurrencyStamp = "d66ef4c4-0c49-4d7a-87f3-36c37fa96429",
                             Type = "role",
                             UserId = new Guid("13229d33-99e0-41b3-b18d-4f72127e3971"),
                             Value = "Admin"

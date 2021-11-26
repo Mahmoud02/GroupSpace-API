@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GroupSpace.DAL.Migrations
 {
     [DbContext(typeof(AppDataContext))]
-    [Migration("20211123195441_InitialCreate")]
+    [Migration("20211126223723_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -1,4 +1,5 @@
 ﻿using GroupSpace.BLL;
+using GroupSpace.BLL.Enumeration;
 using GroupSpace.BLL.Models.Chat;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -29,13 +30,15 @@ namespace GroupSpaceApi.Hubs
             msg.UserName = user.UserName;
             msg.PhotoUrl = user.PersonalImageUrl;
             msg.Date = DateTime.Now;
+            msg.Type = (int)MessageType.Message;
             await Clients.Group(group).SendAsync("MessageReceived", msg);
         }
-        public async Task AddToGroup(string groupName)
+        public async Task AddToGroup(string groupName,string sub)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
-            string msg = $"{Context.ConnectionId} has joined the group {groupName}.";
-            ChatDto chat = new() { Message = msg, Type ="sent", Date = DateTime.Now };
+            var user = userService.Find(sub);
+            string msg = $"{user.UserName} is online.";
+            ChatDto chat = new() { Message = msg, Type = (int)MessageType.NotifyOnlineUser, Date = DateTime.Now };
             await Clients.Group(groupName).SendAsync("MessageReceived", chat);
         }
 
