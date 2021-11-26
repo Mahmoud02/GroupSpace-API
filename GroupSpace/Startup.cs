@@ -1,7 +1,12 @@
+using Abp.AspNetCore.SignalR.Hubs;
 using GroupSpace.BLL;
 using GroupSpace.DAL.DataContext;
+using GroupSpaceApi.Authorization;
+using GroupSpaceApi.Hubs;
 using GroupSpaceWeb.Helpers;
+using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -13,6 +18,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,30 +41,78 @@ namespace GroupSpace
            
             services.AddControllers();
             services.AddServices();
-            // configure strongly typed JwtSettings objects
+            
+            //configure strongly typed JwtSettings objects
+
             var jwtSettingsSection = Configuration.GetSection("JwtSettings");
             services.Configure<JwtSettings>(jwtSettingsSection);
-            // Configure Authentication
-            services.AddAuthentication(auth =>
-            {
-                auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters
+            //To clear Default Mapping Of Claims that returned by IDP
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            //Configure Ahtentication Middlware
+            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+                .AddIdentityServerAuthentication(configureOptions =>
                 {
-                    ValidateIssuer = true,
-                    ValidIssuer = Configuration["JwtSettings:Issuer"],
-                    ValidateAudience = true,
-                    ValidAudience = Configuration["JwtSettings:Audience"],
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtSettings:SigningKey"]))
-                };
+                    configureOptions.Authority = "https://localhost:5001/";
+                    configureOptions.ApiName = "groupSpaceApi";
+                    configureOptions.RequireHttpsMetadata = true;
+                })
+                .AddJwtBearer("IdpServerSchema",options =>
+                {
+
+                    options.SaveToken = false;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = Configuration["JwtSettings:Issuer"],
+                        ValidateAudience = true,
+                        ValidAudience = Configuration["JwtSettings:Audience"],
+                        ValidateIssuerSigningKey = true,
+                        ValidateLifetime = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtSettings:SigningKey"]))
+                    };
+                });
+            //Configure Authorization Policy
+            services.AddAuthorization(authorizationOptions =>
+               authorizationOptions.AddPolicy(
+                   "MustOwnGroup",
+                   authorizationPolicyBuilder =>
+                   {
+                       authorizationPolicyBuilder.AuthenticationSchemes.Add(IdentityServerAuthenticationDefaults.AuthenticationScheme);
+                       authorizationPolicyBuilder.RequireAuthenticatedUser();
+                       authorizationPolicyBuilder.AddRequirements(new MustOwnGroupRequirement());
+                          
+                   }
+               )
+           );
+            services.AddAuthorization(authorizationOptions =>
+                authorizationOptions.AddPolicy(
+                    "MarketingTeam",
+                    authorizationPolicyBuilder =>
+                    {
+                        authorizationPolicyBuilder.RequireAuthenticatedUser();
+                        authorizationPolicyBuilder.RequireClaim("secondRole", "marketing");
+                    }
+                )
+            );
+
+            //Configure Authorization Handler
+            services.AddHttpContextAccessor();
+            services.AddScoped<IAuthorizationHandler, MustOwnGroupHandler>();
+            services.AddSignalR(configure => configure.EnableDetailedErrors = true);
+
+            //
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllHeaders",
+                      builder =>
+                      {
+                          builder.WithOrigins("http://localhost")
+                          .AllowCredentials()
+                          .AllowAnyHeader()
+                          .SetIsOriginAllowed(_ => true)
+                          .AllowAnyMethod();
+                      });
             });
-
-
 
         }
 
@@ -76,14 +130,8 @@ namespace GroupSpace
 
 
             app.UseHttpsRedirection();
-            app.UseCors(builder =>
-            {
-                builder
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader();
-            });
-
+            // Shows UseCors with named policy.
+            app.UseCors("AllowAllHeaders");
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
@@ -91,6 +139,10 @@ namespace GroupSpace
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<GroupChat>("/groupchat");
+                //endpoints.MapHub<AbpCommonHub>("/signalr"); // Restore this
+                //endpoints.MapHub<GroupChat>("/GroupChat");
+
             });
         }
     }

@@ -46,8 +46,6 @@ namespace GroupSpace.DAL.Migrations
 
                     b.HasIndex("GroupTypeId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("Groups");
                 });
 
@@ -66,6 +64,9 @@ namespace GroupSpace.DAL.Migrations
                     b.Property<int>("RoleTypeGroupId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("RoleTypeGroupRoleTypeId")
+                        .HasColumnType("int");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -73,11 +74,38 @@ namespace GroupSpace.DAL.Migrations
 
                     b.HasIndex("GroupId");
 
-                    b.HasIndex("RoleTypeGroupId");
+                    b.HasIndex("RoleTypeGroupRoleTypeId");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("GroupMembers");
+                });
+
+            modelBuilder.Entity("GroupSpace.DAL.Entities.GroupRoleType", b =>
+                {
+                    b.Property<int>("GroupRoleTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("GroupRoleTypeId");
+
+                    b.ToTable("GroupRoleTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            GroupRoleTypeId = 1,
+                            Text = "User"
+                        },
+                        new
+                        {
+                            GroupRoleTypeId = 2,
+                            Text = "Moderator"
+                        });
                 });
 
             modelBuilder.Entity("GroupSpace.DAL.Entities.GroupType", b =>
@@ -218,6 +246,36 @@ namespace GroupSpace.DAL.Migrations
                     b.ToTable("Posts");
                 });
 
+            modelBuilder.Entity("GroupSpace.DAL.Entities.PostComment", b =>
+                {
+                    b.Property<int>("PostCommentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("NumOfLikes")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PostCommentId");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PostComment");
+                });
+
             modelBuilder.Entity("GroupSpace.DAL.Entities.ReportPost", b =>
                 {
                     b.Property<int>("ReportPostId")
@@ -247,33 +305,6 @@ namespace GroupSpace.DAL.Migrations
                     b.ToTable("ReportPosts");
                 });
 
-            modelBuilder.Entity("GroupSpace.DAL.Entities.RoleTypeGroup", b =>
-                {
-                    b.Property<int>("RoleTypeGroupId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("RoleTypeGroupId");
-
-                    b.ToTable("RoleTypesGroup");
-
-                    b.HasData(
-                        new
-                        {
-                            RoleTypeGroupId = 1,
-                            Text = "User"
-                        },
-                        new
-                        {
-                            RoleTypeGroupId = 2,
-                            Text = "Moderator"
-                        });
-                });
-
             modelBuilder.Entity("GroupSpace.DAL.Entities.User", b =>
                 {
                     b.Property<int>("UserId")
@@ -283,25 +314,11 @@ namespace GroupSpace.DAL.Migrations
                     b.Property<string>("Bio")
                         .HasColumnType("text");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("OnlineStatus")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<byte[]>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("longblob");
-
-                    b.Property<byte[]>("PasswordSalt")
-                        .IsRequired()
-                        .HasColumnType("longblob");
-
                     b.Property<string>("PersonalImageUrl")
                         .HasColumnType("text");
 
-                    b.Property<string>("Token")
+                    b.Property<string>("SubID")
+                        .HasMaxLength(200)
                         .HasColumnType("text");
 
                     b.Property<string>("UserName")
@@ -310,7 +327,7 @@ namespace GroupSpace.DAL.Migrations
 
                     b.HasKey("UserId");
 
-                    b.HasIndex("Email")
+                    b.HasIndex("SubID")
                         .IsUnique();
 
                     b.ToTable("Users");
@@ -324,34 +341,28 @@ namespace GroupSpace.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GroupSpace.DAL.Entities.User", null)
-                        .WithMany("UserGroups")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("GroupType");
                 });
 
             modelBuilder.Entity("GroupSpace.DAL.Entities.GroupMember", b =>
                 {
-                    b.HasOne("GroupSpace.DAL.Entities.Group", null)
+                    b.HasOne("GroupSpace.DAL.Entities.Group", "Group")
                         .WithMany("GroupMembers")
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GroupSpace.DAL.Entities.RoleTypeGroup", "RoleType")
+                    b.HasOne("GroupSpace.DAL.Entities.GroupRoleType", "RoleType")
                         .WithMany()
-                        .HasForeignKey("RoleTypeGroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RoleTypeGroupRoleTypeId");
 
                     b.HasOne("GroupSpace.DAL.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Group");
 
                     b.Navigation("RoleType");
 
@@ -380,6 +391,23 @@ namespace GroupSpace.DAL.Migrations
                     b.HasOne("GroupSpace.DAL.Entities.Group", null)
                         .WithMany("Posts")
                         .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GroupSpace.DAL.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("GroupSpace.DAL.Entities.PostComment", b =>
+                {
+                    b.HasOne("GroupSpace.DAL.Entities.Post", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -433,9 +461,9 @@ namespace GroupSpace.DAL.Migrations
                     b.Navigation("Groups");
                 });
 
-            modelBuilder.Entity("GroupSpace.DAL.Entities.User", b =>
+            modelBuilder.Entity("GroupSpace.DAL.Entities.Post", b =>
                 {
-                    b.Navigation("UserGroups");
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

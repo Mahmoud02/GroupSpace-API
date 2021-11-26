@@ -14,12 +14,12 @@ namespace GroupSpace.BLL
     public interface IJoinRequestService
     {
         IEnumerable<JoinRequestDto> All();
-        Response Add(JoinRequestInsertDto entity);
+        Response Add(string sub,JoinRequestInsertDto entity);
         JoinRequestDto Get(int id);
         bool CheckIfRequestExist(int id);
         Response Delete(int joinRequestId);
-        int GetJoinRequestID(int userId, int groupId);
-        List<int> getGroupsIdOfJoinRequestByUserId(int userId);
+        int GetJoinRequestID(string sub, int groupId);
+        List<int> GetGroupsIdOfJoinRequestByUserId(string sub);
 
     }
     class JoinRequestService : IJoinRequestService
@@ -32,9 +32,13 @@ namespace GroupSpace.BLL
             this._mapper = mapper;
 
         }
-        public  Response Add(JoinRequestInsertDto entity)
+        public  Response Add(string sub,JoinRequestInsertDto entity)
         {
+            var user = unitOfWork.UserRepository.Find(u => u.SubID == sub).FirstOrDefault();
+
             var joinRequest = _mapper.Map<JoinRequest>(entity);
+            joinRequest.UserId = user.UserId;
+
             unitOfWork.JoinRequestRepository.Add(joinRequest);
             var reslut = unitOfWork.SaveChanges();
             var response = _mapper.Map<Response>(reslut);
@@ -69,14 +73,18 @@ namespace GroupSpace.BLL
             var joinRequestDto = _mapper.Map<JoinRequestDto>(joinRequest);
             return joinRequestDto;
         }
-        public int GetJoinRequestID(int userId, int groupId)
+        public int GetJoinRequestID(string sub, int groupId)
         {
-            var joinRequest = unitOfWork.JoinRequestRepository.Get(e => (e.UserId == userId && e.GroupId == groupId) );
+            var user = unitOfWork.UserRepository.Find(u => u.SubID == sub).FirstOrDefault();
+            var joinRequest = unitOfWork.JoinRequestRepository.Find(e => (e.UserId == user.UserId && e.GroupId == groupId)).FirstOrDefault();
+            if (joinRequest == null)
+                return 0;
             return joinRequest.JoinRequestId;
         }
-        public List<int> getGroupsIdOfJoinRequestByUserId(int userId)
+        public List<int> GetGroupsIdOfJoinRequestByUserId(string sub)
         {
-            var joinRequests = unitOfWork.JoinRequestRepository.Find(e => e.UserId == userId);
+            var user = unitOfWork.UserRepository.Find(u => u.SubID == sub).FirstOrDefault();
+            var joinRequests = unitOfWork.JoinRequestRepository.Find(e => e.UserId == user.UserId);
             var groupsIdList = joinRequests
               .Select(x => x.GroupId)
               .ToList();

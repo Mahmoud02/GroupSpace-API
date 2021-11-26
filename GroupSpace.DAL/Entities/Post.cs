@@ -24,6 +24,8 @@ namespace GroupSpace.DAL.Entities
         public DateTime Date { get; set; }
         //
         public User User { get; set; }
+        public List<PostComment> Comments { get; set; }
+
 
     }
 }

@@ -3,11 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroupSpaceWeb", "GroupSpace\GroupSpaceWeb.csproj", "{F4C4687E-A51B-4588-A096-0B3B0CE6C7AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GroupSpaceApi", "GroupSpace\GroupSpaceApi.csproj", "{F4C4687E-A51B-4588-A096-0B3B0CE6C7AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroupSpace.DAL", "GroupSpace.DAL\GroupSpace.DAL.csproj", "{E9F17058-E5C0-4AD5-81EC-97BBEE5171E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GroupSpace.DAL", "GroupSpace.DAL\GroupSpace.DAL.csproj", "{E9F17058-E5C0-4AD5-81EC-97BBEE5171E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroupSpace.BLL", "GroupSpace.BLL\GroupSpace.BLL.csproj", "{17B98A51-9522-4CD9-8432-B94C45FAB2D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GroupSpace.BLL", "GroupSpace.BLL\GroupSpace.BLL.csproj", "{17B98A51-9522-4CD9-8432-B94C45FAB2D6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Accounts.GroupSpace", "Accounts.GroupSpace\Accounts.GroupSpace.csproj", "{00A6F3AF-935A-43E5-88A1-0D475EB9EA26}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlPanel.GroupSpace", "ControlPanel.GroupSpace\ControlPanel.GroupSpace.csproj", "{0FB34CC2-CAA5-4816-A9C6-30D6C13F987A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +31,14 @@ Global
 		{17B98A51-9522-4CD9-8432-B94C45FAB2D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17B98A51-9522-4CD9-8432-B94C45FAB2D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17B98A51-9522-4CD9-8432-B94C45FAB2D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00A6F3AF-935A-43E5-88A1-0D475EB9EA26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00A6F3AF-935A-43E5-88A1-0D475EB9EA26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00A6F3AF-935A-43E5-88A1-0D475EB9EA26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00A6F3AF-935A-43E5-88A1-0D475EB9EA26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FB34CC2-CAA5-4816-A9C6-30D6C13F987A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FB34CC2-CAA5-4816-A9C6-30D6C13F987A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FB34CC2-CAA5-4816-A9C6-30D6C13F987A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FB34CC2-CAA5-4816-A9C6-30D6C13F987A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

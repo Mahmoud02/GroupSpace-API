@@ -14,12 +14,15 @@ namespace GroupSpace.DAL.Repository
         T Add(T entity);
         T Update(T entity);
         T Get(int id);
+        T Get(string id);
         T Get(Expression<Func<T, bool>> predicate);
 
         void Delete(T entity);
         IEnumerable<T> All();
         IEnumerable<T> Find(Expression<Func<T, bool>> predicate);
         bool CheckIfEntityExist(int id);
+        bool CheckIfEntityExist(string id);
+
         void SaveChanges();
     }
 }

@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1>Identity Token</h1>
+    <h2>@TempData["IdToken"]</h2>
+    <br>
+    <h1>Access Token</h1>
+    <h2>@TempData["accessToken"]</h2>
+    <br>
+    <h1>Refresh Token </h1>
+    <h2>@TempData["refreshToken"]</h2>
+    <br>
+    <h1>Address</h1>
+    <h2>@TempData["address"]</h2>
+    <br>
+    <h3>User Claims</h3>
+    <p>@TempData["claims"]</p>
+</div>

@@ -9,7 +9,7 @@ namespace GroupSpace.BLL.Models.Group
     public class JoinRequestDto
     {
         public int JoinRequestId { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public int GroupId { get; set; }
         public DateTime Date { get; set; }
         public UserDto User { get; set; }

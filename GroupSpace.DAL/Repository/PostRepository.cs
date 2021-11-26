@@ -31,7 +31,10 @@ namespace GroupSpace.DAL.Repository
         }
         public override IEnumerable<Post> Find(Expression<Func<Post, bool>> predicate)
         {
-            return context.Posts.Include(p => p.User)
+            return context.Posts
+                .Include(p => p.User)
+                .Include(p =>p.Comments)
+                .ThenInclude(c => c.User)
                 .AsQueryable()
                 .Where(predicate).ToList();
         }

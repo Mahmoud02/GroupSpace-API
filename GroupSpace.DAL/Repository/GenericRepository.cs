@@ -36,6 +36,10 @@ namespace GroupSpace.DAL.Repository
         {
             return context.Find<T>(id);
         }
+        public virtual T Get(string id)
+        {
+            return context.Find<T>(id);
+        }
         public virtual T Get(Expression<Func<T, bool>> predicate)
         {
             return context.Set<T>()
@@ -65,6 +69,19 @@ namespace GroupSpace.DAL.Repository
         {
             var entity = context.Find<T>(id);
                   
+            if (entity != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public bool CheckIfEntityExist(string id)
+        {
+            var entity = context.Find<T>(id);
+
             if (entity != null)
             {
                 return true;

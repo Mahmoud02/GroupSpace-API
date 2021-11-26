@@ -18,10 +18,10 @@ namespace GroupSpace.BLL
         Response Add(GroupMemberInsertDto entity);
         GroupMemberDto Get(int id);
         Response Update(GroupMemberInsertDto entity);
-        bool CheckIfGroupMemberExist(int id);
+        bool CheckIfGroupMemberExist(int userId);
         Response Delete(int userId);
         
-        IEnumerable<GroupDto> GetUserJoinedGroups(int userId);
+        IEnumerable<GroupDto> GetUserJoinedGroups(string sub);
 
     }
     public class GroupMemberService : IGroupMemberService
@@ -80,9 +80,11 @@ namespace GroupSpace.BLL
             var response = _mapper.Map<Response>(reslut);
             return response;
         }
-        public IEnumerable<GroupDto> GetUserJoinedGroups(int userId)
+        public IEnumerable<GroupDto> GetUserJoinedGroups(string sub)
         {
-            var groupMembers = unitOfWork.GroupMemberRepository.Find(g => g.UserId == userId);
+            var user = unitOfWork.UserRepository.Find(u => u.SubID == sub).FirstOrDefault();
+
+            var groupMembers = unitOfWork.GroupMemberRepository.Find(g => g.UserId == user.UserId);
 
             var groups = groupMembers.Select(a => a.Group).ToList();
 

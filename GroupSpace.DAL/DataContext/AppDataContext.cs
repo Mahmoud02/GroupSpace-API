@@ -16,10 +16,12 @@ namespace GroupSpace.DAL.DataContext
         public DbSet<GroupType> GroupTypes { get; set; }
         public DbSet<JoinRequest> JoinRequests { get; set; }
 
-        public DbSet<RoleTypeGroup> RoleTypesGroup { get; set; }
+        public DbSet<GroupRoleType> GroupRoleTypes { get; set; }
         public DbSet<GroupMember> GroupMembers { get; set; }
 
         public DbSet<ReportPost> ReportPosts { get; set; }
+        public DbSet<PostComment> PostComment { get; set; }
+
 
         public static OptionsBuild optionsBuild = new OptionsBuild();
 
@@ -33,11 +35,8 @@ namespace GroupSpace.DAL.DataContext
             base.OnModelCreating(builder);
             
             builder.Entity<User>()
-            .HasIndex(u => u.Email)
-            .IsUnique();
-            
-          
-          
+              .HasIndex(u => u.SubID)
+              .IsUnique();
             //Feed Type With data
             SeedData(builder);
 
@@ -58,8 +57,8 @@ namespace GroupSpace.DAL.DataContext
             builder.Entity<GroupType>().HasData(new GroupType { GroupTypeId = 13, Text = "Food & drink" });
 
             //Role Type Of Group
-            builder.Entity<RoleTypeGroup>().HasData(new RoleTypeGroup { RoleTypeGroupId = 1, Text = "User" });
-            builder.Entity<RoleTypeGroup>().HasData(new RoleTypeGroup { RoleTypeGroupId = 2, Text = "Moderator"});
+            builder.Entity<GroupRoleType>().HasData(new GroupRoleType { GroupRoleTypeId = 1, Text = "User" });
+            builder.Entity<GroupRoleType>().HasData(new GroupRoleType { GroupRoleTypeId = 2, Text = "Moderator"});
         }
 
 

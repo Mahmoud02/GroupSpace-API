@@ -26,6 +26,9 @@ namespace GroupSpace.BLL
             services.AddTransient<IGroupTypeService, GroupTypeService>();
             services.AddTransient<IJoinRequestService, JoinRequestService>();
             services.AddTransient<IGroupMemberService, GroupMemberService>();
+            services.AddTransient<IPostCommentService, PostCommentService>();
+            services.AddTransient<IReportPostService, ReportPostService>();
+
             return services.AddTransient<IUserService, UserService>();
 
 

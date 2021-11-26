@@ -11,25 +11,17 @@ namespace GroupSpace.DAL.Entities
     public class User
     {
         public int UserId { get; set; }
+
+        [MaxLength(200)]
+        [Column(TypeName = "text")]
+        public string SubID { get; set; }
         [Required]
         [Column(TypeName = "text")]
         public string UserName { get; set; }
-        [Required]
-        public byte[] PasswordHash { get; set; }
-        [Required]
-        public byte[] PasswordSalt { get; set; }
-        [Required]
-        [Column(TypeName = "text")]
-        public string Email { get; set; }
+
         [Column(TypeName = "text")]
         public string PersonalImageUrl { get; set; }
         [Column(TypeName = "text")]
         public string Bio { get; set; }
-        public bool OnlineStatus { get; set; }
-        [Column(TypeName = "text")]
-        public string Token { get; set; }
-        public List<Group> UserGroups { get; set; }
-
-
     }
 }

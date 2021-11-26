@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,6 @@ namespace GroupSpace.DAL.Entities
         //Navigation
         public User User { get; set; }
         public Group Group { get; set; }
-        public RoleTypeGroup RoleType { get; set; }
+        public GroupRoleType RoleType { get; set; }
     }
 }

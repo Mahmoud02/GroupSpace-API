@@ -1,5 +1,6 @@
 ﻿using GroupSpace.BLL;
 using GroupSpace.BLL.Models.Group;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 namespace GroupSpaceWeb.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class MembersController : ControllerBase
     {

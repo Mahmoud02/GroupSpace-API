@@ -17,20 +17,20 @@ namespace GroupSpace.BLL
     public interface IGroupService
     {
         IEnumerable<GroupDto> All();
-        Task<Response> Add(GroupInsertDto entity);
+        Task<Response> Add(string subID, GroupInsertDto entity);
         GroupDto Get(int id);
         Response Update(GroupInsertDto entity);
         bool CheckIfGroupExist(int id);
+        bool IsGroupOwner(int groupId , string sub);
         Response Delete(int userId);
         //Related Data
         GroupMetaData GetGroupMetaData(int groupId);
-        IEnumerable<GroupDto> GetUserGroups(int userId);
+        IEnumerable<GroupDto> GetUserGroups(string sub);
         IEnumerable<GroupMemberDto> GetGroupUsers(int groupId);
         IEnumerable<JoinRequestDto> GetJoinRequests(int groupId);
-        IEnumerable<ReportPostDto> GetReportedPosts(int groupId);
 
         //Find Groups For The User
-        IEnumerable<GroupDto> FindGroups(int userId);
+        IEnumerable<GroupDto> FindGroups(string sub);
 
     }
     public class GroupService : IGroupService
@@ -46,9 +46,12 @@ namespace GroupSpace.BLL
             _config = config;
         }
 
-        public async Task<Response> Add(GroupInsertDto entity)
+        public async Task<Response> Add(string sub, GroupInsertDto entity)
         {
-           
+            var user = unitOfWork.UserRepository.Find(u => u.SubID == sub).FirstOrDefault();
+            if (user == null) 
+                return new Response() { OpertaionState = false,Message="Cant Added Group for that User"};
+            
             var AccessKey = _config.GetSection("S3Settings").GetSection("AccessKey").Value;
             var SecretKey = _config.GetSection("S3Settings").GetSection("SecretKey").Value;
             var BuketName = _config.GetSection("S3Settings").GetSection("BucketName").Value;
@@ -69,6 +72,7 @@ namespace GroupSpace.BLL
                     throw new AppException("File \"" + "The file is too large.");
                 }
             }
+            entity.UserId = user.UserId;
             var group = _mapper.Map<Group>(entity);
             group.CoverPhotoUrl = coverUrl;
             unitOfWork.GroupRepository.Add(group);
@@ -113,9 +117,11 @@ namespace GroupSpace.BLL
             var response = _mapper.Map<Response>(reslut);
             return response;
         }
-        public IEnumerable<GroupDto> GetUserGroups(int userId)
+        public IEnumerable<GroupDto> GetUserGroups(string sub)
         {
-            var groups = unitOfWork.GroupRepository.Find(g => g.UserId == userId);
+            var user = unitOfWork.UserRepository.Find(u => u.SubID == sub).FirstOrDefault();
+
+            var groups = unitOfWork.GroupRepository.Find(g => g.UserId == user.UserId);
             return _mapper.Map<List<GroupDto>>(groups);
         }
         public IEnumerable<GroupMemberDto> GetGroupUsers(int groupId)
@@ -148,17 +154,21 @@ namespace GroupSpace.BLL
             return entites;
         }
 
-        public IEnumerable<ReportPostDto> GetReportedPosts(int groupId)
+        public IEnumerable<GroupDto> FindGroups(string sub)
         {
-            var reportedPosts = unitOfWork.ReportPostRepository.Find(g => g.GroupId == groupId);
-
-            return _mapper.Map<List<ReportPostDto>>(reportedPosts);
+            var user = unitOfWork.UserRepository.Find(u => u.SubID == sub).FirstOrDefault();
+            var groups = unitOfWork.GroupRepository.Find(g => g.UserId != user.UserId);
+            return _mapper.Map<List<GroupDto>>(groups);
         }
 
-        public IEnumerable<GroupDto> FindGroups(int userId)
+        public bool IsGroupOwner(int groupId, string sub)
         {
-            var groups = unitOfWork.GroupRepository.Find(g => g.UserId != userId);
-            return _mapper.Map<List<GroupDto>>(groups);
+            var user = unitOfWork.UserRepository.Find(u => u.SubID == sub).FirstOrDefault();
+            var group = unitOfWork.GroupRepository.Find( g => g.GroupId == groupId  && g.UserId == user.UserId);
+            
+            if (group == null) return false;
+
+            return true;
         }
     }
 }

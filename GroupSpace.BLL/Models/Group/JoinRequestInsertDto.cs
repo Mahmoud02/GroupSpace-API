@@ -10,8 +10,6 @@ namespace GroupSpace.BLL.Models.Group
     public class JoinRequestInsertDto
     {
         [Required]
-        public int UserId { get; set; }
-        [Required]
         public int GroupId { get; set; }
         [Required]
         public DateTime Date { get; set; }

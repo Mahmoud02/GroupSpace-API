@@ -13,18 +13,7 @@ namespace GroupSpace.DAL.Repository
         public UserRepository(AppDataContext context) : base(context)
         {
         }
-        public override User Update(User entity)
-        {
-            var user = context.Users
-                .Single(c => c.UserId == entity.UserId);
-
-            user.Email = entity.Email;
-            user.Bio = entity.Bio;
-            /*user.Password = entity.Password;*/
-            user.PersonalImageUrl = entity.PersonalImageUrl;
-            user.OnlineStatus = entity.OnlineStatus;
-            return base.Update(user);
-        }
+       
        
     }
 }

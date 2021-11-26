@@ -3,6 +3,8 @@ using GroupSpace.BLL.Models;
 using GroupSpace.BLL.Models.User;
 using GroupSpace.BLL.Shared;
 using GroupSpaceWeb.Helpers;
+using IdentityServer4.AccessTokenValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -22,56 +24,65 @@ using System.Threading.Tasks;
 namespace GroupSpaceWeb.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class UsersController : ControllerBase
     {
         private readonly IUserService userService;
-        private readonly JwtSettings jwtSettings;
         private readonly IGroupService groupService;
         private readonly IJoinRequestService joinRequestService;
         private readonly IGroupMemberService groupMemberService;
-
-
-
+        private readonly IAuthorizationService authorizationService;
 
         public UsersController(
-            IUserService userService, 
-            IOptions<JwtSettings> jwtSettings ,
+            IUserService userService,
+            IOptions<JwtSettings> jwtSettings,
             IGroupService groupService,
             IJoinRequestService joinRequestService,
-            IGroupMemberService groupMemberService
+            IGroupMemberService groupMemberService,
+            IAuthorizationService authorizationService
             )
         {
             this.userService = userService;
-            this.jwtSettings = jwtSettings.Value;
             this.groupService = groupService;
             this.joinRequestService = joinRequestService;
             this.groupMemberService = groupMemberService;
+            this.authorizationService = authorizationService;
 
         }
 
         // GET: api/<UserController>
+
         [HttpGet]
         public IEnumerable<UserDto> Get()
         
-        {
+        {         
             return userService.All();
         }
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
-        {
+        public  IActionResult  Get(int id)
+        {           
             if (!userService.CheckIfUserExist(id)) return NotFound(new { Message = "There is no user with such Id" });
-
             return Ok(userService.Get(id)); 
         }
-
         // POST api/<UserController>
-        [AllowAnonymous]
+
         [HttpPost]
-        public IActionResult Post(UserInsertDto userInsert )
+        [Authorize(AuthenticationSchemes = "IdpServerSchema")]
+        public IActionResult Post()
         {
+            var userSubID = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+            var userName = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Name)?.Value;
+
+
+            UserInsertDto userInsert = new() {
+                UserName = userName,
+                SubID = userSubID,
+                PersonalImageUrl = "https://e7.pngegg.com/pngimages/348/800/png-clipart-man-wearing-blue-shirt-illustration-computer-icons-avatar-user-login-avatar-blue-child.png"
+            };
+
             try
             {
                 // create user
@@ -81,96 +92,47 @@ namespace GroupSpaceWeb.Controllers
                 {
                     //unexpected Errors happens in server
                     return StatusCode(500);
-                }           
+                }
             }
             catch (AppException ex)
             {
                 // return error message if there was an exception
                 return BadRequest(new { message = ex.Message });
             }
-           
-        }
-
-        // PUT api/<UserController>/5
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] UserInsertDto userInsert)
-        {
-
-            if (!userService.CheckIfUserExist(id)) return NotFound(new { Message = "There is no user with such Id" });
-            var response = userService.Update(userInsert);
-            if (response.OpertaionState) return Ok(new { Message = "User Is Updated Successfully" });
-            else
-            {
-                return StatusCode(500, response.Message);
-            }
-        }
-
-        // DELETE api/<UserController>/5
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
-        {
-            
-            if (!userService.CheckIfUserExist(id)) return NotFound(new { Message = "There is no user with such Id" });
-            var response = userService.Delete(id);
-            if (response.OpertaionState) return Ok(new { Message = "User Is Deleted Successfully" });
-            else
-            {
-                return StatusCode(500, response.Message);
-            }
-
 
         }
-        [AllowAnonymous]
-        [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody] AuthenticateModel model)
-        {
-            var user = userService.Authenticate(model.Email, model.Password);
-
-            if (user == null)
-                return BadRequest(new { message = "Username or password is incorrect" });
-            var claims = new List<Claim>();
-            claims.Add(new Claim("UserId", user.UserId.ToString()));
-            
-            var tokenDescriptor = JwtHelper.GetJwtToken(
-                        user.UserName,
-                        jwtSettings.SigningKey,
-                        jwtSettings.Issuer,
-                        jwtSettings.Audience,
-                        TimeSpan.FromDays(jwtSettings.TokenTimeoutDays),
-                        claims.ToArray());
-            var token  = new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
-
-            // return basic user info and authentication token
-            return Ok(new
-            {
-                user.UserId,
-                user.UserName,
-                user.Email,
-                user.PersonalImageUrl,
-                Token = token
-            });
-        }
-
         #region Get user realted resource
-        
-        [HttpGet("{Id}/groups")]
-        public IActionResult GetUserGroups(int Id)
+
+        [Authorize]
+        [HttpGet("{sub}/groups")]
+        public IActionResult GetUserGroups(string sub)
         {
-            var data = groupService.GetUserGroups(Id);
+            var data = groupService.GetUserGroups(sub);
             return Ok(new { data });
         }
-        [HttpGet("{Id}/joined")]
-        public IActionResult GetUserJoinedGroups(int Id)
+        [HttpGet("{sub}/joined")]
+        public IActionResult GetUserJoinedGroups(string sub)
         {
-            var data = groupMemberService.GetUserJoinedGroups(Id);
+            //get User Sub
+            var data = groupMemberService.GetUserJoinedGroups(sub);
             return Ok(new { data });
         }
-        [HttpGet("{Id}/requests")]
-        public IActionResult GetGroupsIdOfJoinRequestByUserId(int Id)
+        [HttpGet("{sub}/requests")]
+        public IActionResult GetGroupsIdOfJoinRequestByUserId(string sub)
         {
-            var data = joinRequestService.getGroupsIdOfJoinRequestByUserId(Id);
+            var data = joinRequestService.GetGroupsIdOfJoinRequestByUserId(sub);
             return Ok(new { data });
         }
         #endregion
     }
 }
+/*code for test*/
+/*
+ var roles = User.Identity;
+            var val = User.IsInRole("Admin");
+            var ownerId = User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+            var idt = Int16.Parse(ownerId);
+            var result = await this.authorizationService.AuthorizeAsync(User, "MarketingTeam");
+
+ 
+ */

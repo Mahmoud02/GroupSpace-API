@@ -12,6 +12,7 @@ namespace GroupSpace.DAL.Entities
     {
         public int GroupId { get; set; }
         [Required]
+     
         public int UserId { get; set; }
         [Required]
         public int GroupTypeId { get; set; }

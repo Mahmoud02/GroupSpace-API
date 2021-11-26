@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GroupSpace.BLL.Models.PostComment;
+using System;
+using System.Collections.Generic;
 
 namespace GroupSpace.BLL.Models
 {
@@ -12,5 +14,7 @@ namespace GroupSpace.BLL.Models
         public String PhotoUrl { get; set; }
         public DateTime Date { get; set; }
         public UserDto User { get; set; }
+        public List<PostCommentDto> Comments { get; set; }
+
     }
 }

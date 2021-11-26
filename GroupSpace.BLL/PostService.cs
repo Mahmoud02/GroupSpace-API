@@ -16,7 +16,7 @@ namespace GroupSpace.BLL
     public interface IPostService
     {
         IEnumerable<PostDto> All();
-        Task<Response> Add(PostInsertDto entity);
+        Task<Response> Add(string sub, PostInsertDto entity);
         PostDto Get(int id);
         Response Update(PostInsertDto entity);
         bool CheckIfPostExist(int id);
@@ -38,8 +38,12 @@ namespace GroupSpace.BLL
             _config = config;
 
         }
-        public async Task<Response> Add(PostInsertDto entity)
+        public async Task<Response> Add(string sub,PostInsertDto entity)
         {
+            var user = unitOfWork.UserRepository.Find(u => u.SubID == sub).FirstOrDefault();
+            if (user == null)
+                return new Response() { OpertaionState = false, Message = "Cant Added Group for that User" };
+
             string photoUrl = null;
             //check if user add photo
             if(entity.Photo != null)
@@ -62,8 +66,8 @@ namespace GroupSpace.BLL
                     }
                 }
             }
-           
             var post = _mapper.Map<Post>(entity);
+            post.UserId = user.UserId;
             post.PhotoUrl = photoUrl;
             unitOfWork.PostRepository.Add(post);
             var reslut = unitOfWork.SaveChanges();
@@ -78,7 +82,7 @@ namespace GroupSpace.BLL
         }
         public bool CheckIfPostExist(int id)
         {
-            throw new NotImplementedException();
+            return unitOfWork.PostRepository.CheckIfEntityExist(id);
         }
         public Response Delete(int postId)
         {

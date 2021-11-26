@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 namespace GroupSpaceWeb.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class PostsController : ControllerBase
     {
@@ -22,6 +24,7 @@ namespace GroupSpaceWeb.Controllers
         }
         // GET: api/<PostsController>
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IEnumerable<PostDto> Get()
         {
             return postService.All();
@@ -41,8 +44,10 @@ namespace GroupSpaceWeb.Controllers
         [HttpPost]
         public IActionResult Post([FromForm] PostInsertDto post)
         {
+            //get User Sub
+            var sub = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
             post.Date = DateTime.Now;
-            var response = postService.Add(post).Result;
+            var response = postService.Add(sub, post).Result;
             if (response.OpertaionState)
             {
                 return Created("group", new { Message = "Post is Published Succesfully" });

@@ -1,8 +1,10 @@
 ﻿using GroupSpace.BLL;
 using GroupSpace.BLL.Models.Group;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,6 +13,7 @@ using System.Threading.Tasks;
 namespace GroupSpaceWeb.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class JoinRequestsController : ControllerBase
     {
@@ -40,8 +43,10 @@ namespace GroupSpaceWeb.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] JoinRequestInsertDto joinRequest)
         {
+            var sub = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
             joinRequest.Date = DateTime.Now;
-            var response = joinRequestService.Add(joinRequest);
+            var response = joinRequestService.Add(sub, joinRequest);
             if (response.OpertaionState)
             {
                 return Created("request", new { Message = "joinRequest is Added Succesfully" });
@@ -67,7 +72,11 @@ namespace GroupSpaceWeb.Controllers
         [HttpDelete]
         public IActionResult Delete(JoinRequestInsertDto joinRequest)
         {
-            var id = joinRequestService.GetJoinRequestID(joinRequest.UserId, joinRequest.GroupId);
+            var sub = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+            var id = joinRequestService.GetJoinRequestID(sub, joinRequest.GroupId);
+            if(id ==0) return BadRequest(new { Message = "This user didnt join request for that group" });
+
             var response = joinRequestService.Delete(id);
             if (response.OpertaionState) return Ok(new { Message = "JoinRequest Is Deleted Successfully" });
             else

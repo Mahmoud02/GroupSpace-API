@@ -15,7 +15,6 @@ namespace GroupSpace.DAL.Entities
         public String Text { get; set; }
         [Required]
         public int PostId { get; set; }
-        [Required]
         public int UserId { get; set; }       
         [Required]
         public DateTime Date { get; set; }

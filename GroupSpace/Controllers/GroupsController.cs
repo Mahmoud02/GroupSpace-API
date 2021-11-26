@@ -1,10 +1,10 @@
 ﻿using GroupSpace.BLL;
 using GroupSpace.BLL.Models;
-using GroupSpaceWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,22 +13,28 @@ using System.Threading.Tasks;
 namespace GroupSpaceWeb.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class GroupsController : ControllerBase
     {
         private readonly IGroupService groupService;
         private readonly IPostService postService;
+        private readonly IReportPostService reportPostService;
+
         private readonly IGroupMemberService groupMemberService;
 
 
-        public GroupsController(IGroupService groupService,IPostService postService, IGroupMemberService groupMemberService)
+        public GroupsController(IGroupService groupService,IPostService postService, IGroupMemberService groupMemberService, IReportPostService reportPostService)
         {
             this.groupService = groupService;
             this.postService = postService;
             this.groupMemberService = groupMemberService;
+            this.reportPostService = reportPostService;
+
         }
         // GET: api/<GroupController>
         [HttpGet]
+        [Authorize(Roles ="Admin")]
         public IEnumerable<GroupDto> Get()
         {
             return groupService.All();
@@ -37,6 +43,7 @@ namespace GroupSpaceWeb.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
+
             if (!groupService.CheckIfGroupExist(id)) return NotFound(new { Message = "There is no group with such Id" });
 
             return Ok(groupService.Get(id));
@@ -46,7 +53,10 @@ namespace GroupSpaceWeb.Controllers
         [HttpPost]
         public IActionResult Post([FromForm] GroupInsertDto group)
         {
-            var response = groupService.Add(group).Result;
+            //get User Sub
+            var sub = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+            var response = groupService.Add( sub, group).Result;
             if (response.OpertaionState) {
                 return Created("group", new { Message ="Group is Added Succesfully" });
             } 
@@ -56,10 +66,11 @@ namespace GroupSpaceWeb.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] GroupInsertDto group)
+        [HttpPut("{Id}")]
+        [Authorize(Policy = "MustOwnGroup")]
+        public IActionResult Put(int Id, [FromBody] GroupInsertDto group)
         {
-            if (!groupService.CheckIfGroupExist(id)) return NotFound(new { Message = "There is no group with such Id" });
+            if (!groupService.CheckIfGroupExist(Id)) return NotFound(new { Message = "There is no group with such Id" });
             var response = groupService.Update(group);
             if (response.OpertaionState) return Ok(new { Message = "Group Is Updated Successfully" });
             else
@@ -69,11 +80,12 @@ namespace GroupSpaceWeb.Controllers
 
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        [HttpDelete("{Id}")]
+        [Authorize(Policy = "MustOwnGroup")]
+        public IActionResult Delete(int Id)
         {
-            if (!groupService.CheckIfGroupExist(id)) return NotFound(new { Message = "There is no group with such Id" });
-            var response = groupService.Delete(id);
+            if (!groupService.CheckIfGroupExist(Id)) return NotFound(new { Message = "There is no group with such Id" });
+            var response = groupService.Delete(Id);
             if (response.OpertaionState) return Ok(new { Message = "Group Is Deleted Successfully" });
             else
             {
@@ -102,24 +114,27 @@ namespace GroupSpaceWeb.Controllers
             return Ok(new { data });
         }
         [HttpGet("{Id}/requests")]
+        [Authorize(Policy = "MustOwnGroup")]
         public IActionResult Requests(int Id)
         {
             var data = groupService.GetJoinRequests(Id);
             return Ok(new { data });
         }
         [HttpGet("{Id}/reports")]
+        [Authorize(Policy = "MustOwnGroup")]
         public IActionResult Reports(int Id)
         {
-            var data = groupService.GetReportedPosts(Id);
+            var data = reportPostService.GetReportedPosts(Id);
             return Ok(new { data });
         }
         #endregion
 
         #region Find Groups For The User
         [HttpGet("Find")]
-        public IActionResult Find([FromQuery] int userId)
+        public IActionResult Find()
         {
-            var data = groupService.FindGroups(userId);
+            var sub = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+            var data = groupService.FindGroups(sub);
             return Ok(new { data });
         }
         #endregion

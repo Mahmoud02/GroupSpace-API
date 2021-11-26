@@ -19,7 +19,7 @@ namespace GroupSpace.DAL.Repository
         IRepository<GroupMember> GroupMemberRepository { get; }
         IRepository<ReportPost> ReportPostRepository { get; }
         IRepository<GroupType> GroupTypeRepository { get; }
-
+        IRepository<PostComment> PostCommentRepository { get; }
 
 
         CommonResult SaveChanges();
@@ -128,7 +128,20 @@ namespace GroupSpace.DAL.Repository
                 return groupTypeRepository;
             }
         }
+        private IRepository<PostComment> postCommentRepository;
 
+        public IRepository<PostComment> PostCommentRepository
+        {
+            get
+            {
+                if (postCommentRepository == null)
+                {
+                    postCommentRepository = new PostCommentRepository(context);
+                }
+
+                return postCommentRepository;
+            }
+        }
         public CommonResult SaveChanges()
         {
             CommonResult result = new();

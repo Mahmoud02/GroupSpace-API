@@ -10,7 +10,8 @@ namespace GroupSpace.BLL.Models.Group
     public class GroupMemberInsertDto
     {
         [Required]
-        public int UserId { get; set; }
+        [MaxLength(200)]
+        public string UserId { get; set; }
         [Required]
         public int GroupId { get; set; }
         [Required]
