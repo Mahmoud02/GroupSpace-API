@@ -39,13 +39,28 @@ whereas a business layer would be responsible for executing specific business ru
 Each layer in the architecture forms an abstraction around the work that needs to be done to satisfy a particular business request.
 #### REST API 
 in this Api, I follow REST architectural style and A REST API (also known as RESTful API) is an application programming interface (API or web API) that conforms to the constraints of REST architectural style and allows for interaction with RESTful web services. REST stands for representational state transfer and was created by computer scientist Roy Fielding.
-### Communication between Accounts.Groups And Api in a secure way
+#### Communication between Accounts.Groups And Api in a secure way
 When the user creates his account, we need to send some of his information like Sub(user identifier) to save in API Database 
 so, we need [Account.GroupSpace] to communicate with the API.
 I use HttpClient to send the request to the API and I Secure communication between them using JWT. 
 
-#### Authentication at API
-The API Authenticate Request be checking the Bearer Token,
+#### API Authentication
+The API authenticate 'requests' by checking the Bearer Token,
 In the API we have two schema.
 1. Bearer Authenticate  Schema, Api Used that schema to validate Requests that come from different clients.
 2. IdpServerSchema, Api Used that schema to validate Requests that come from IdpServer directly.
+
+#### API Authorization
+The API verifies that 'user' have permission to access or manipulate the relevant data.
+I use Role-based authorization and Policy-based authorization
+##### 1. Role-based authorization:
+Role-based authorization checks are declarative—the developer embeds them within their code, against a controller or an action within a controller, specifying roles which the current user must be a member of to access the requested resource.[Authorize(Roles = "Admin")]
+##### 2. Policy-based authorization:
+These building blocks support the expression of authorization evaluations in code. The result is a richer, reusable, testable authorization structure.
+An authorization policy consists of one or more requirements. Register it as part of the authorization service configuration.
+ see Authorization Folder for the code.
+ 
+ #### Real Time chat - SignalR
+ ASP.NET SignalR is a library for  developers that simplifies the process of adding real-time web functionality to applications.
+ SignalR provides a simple API for creating server-to-client remote procedure calls (RPC) that call JavaScript functions in client browsers (and other client platforms) from server-side and vice versa
+ 
