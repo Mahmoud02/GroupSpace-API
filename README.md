@@ -4,7 +4,7 @@
  2. API 
  3. Front End Demo - Using Angular
 
-## First,Accounts.groups Module.
+## First, Accounts.groups Module.
 In this part, we want to provide the user with some features such as logging in and out, creating a new account, confirming their account, and some other things.
 Also, this part helps different applications to obtain the necessary permissions to communicate with the API.
 
