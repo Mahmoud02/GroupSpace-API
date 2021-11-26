@@ -37,4 +37,15 @@ Each layer of the layered architecture pattern has a specific role and responsib
 For example, a presentation layer would be responsible for handling all user interface and browser communication logic, 
 whereas a business layer would be responsible for executing specific business rules associated with the request. 
 Each layer in the architecture forms an abstraction around the work that needs to be done to satisfy a particular business request.
+#### REST API 
+in this Api, I follow REST architectural style and A REST API (also known as RESTful API) is an application programming interface (API or web API) that conforms to the constraints of REST architectural style and allows for interaction with RESTful web services. REST stands for representational state transfer and was created by computer scientist Roy Fielding.
+### Communication between Accounts.Groups And Api in a secure way
+When the user creates his account, we need to send some of his information like Sub(user identifier) to save in API Database 
+so, we need [Account.GroupSpace] to communicate with the API.
+I use HttpClient to send the request to the API and I Secure communication between them using JWT. 
 
+#### Authentication at API
+The API Authenticate Request be checking the Bearer Token,
+In the API we have two schema.
+1. Bearer Authenticate  Schema, Api Used that schema to validate Requests that come from different clients.
+2. IdpServerSchema, Api Used that schema to validate Requests that come from IdpServer directly.
